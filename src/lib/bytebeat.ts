@@ -42,9 +42,35 @@ export const bytebeatAlgorithms: BytebeatAlgorithm[] = [
     name: "Digital Rain",
     description: "Cascading digital tones",
     formula: (t: number): number => {
-      // Normalize the output to stay within 0-255 range
       const raw = ((t >> 6) ^ (t & 0x25)) * (((t >> 11) ^ (t & 0x25)));
       return raw & 0xFF;
+    }
+  },
+  {
+    name: "Acid Lead",
+    description: "Sharp, acidic lead sounds reminiscent of TB-303",
+    formula: (t: number): number => {
+      const freq = ((t << 3) & (t >> 5)) + ((t << 2) & (t >> 7));
+      const mod = (t >> 2) & ((t >> 8) | (t >> 16)) & 0x7F;
+      return (freq * mod) & 0xFF;
+    }
+  },
+  {
+    name: "Cosmic Drift",
+    description: "Ethereal space-like drones and textures",
+    formula: (t: number): number => {
+      const drift = (t * (t >> 8 | t >> 9) & 46 & t >> 8);
+      const space = ((t & t >> 8) | (t >> 3 & t >> 12)) ^ (t >> 14 | t >> 6);
+      return ((drift + space) & 0xFF);
+    }
+  },
+  {
+    name: "8-bit Chiptune",
+    description: "Classic video game console sound chip emulation",
+    formula: (t: number): number => {
+      const square = (t >> 4) & 1;
+      const arp = t * ((t >> 9) | ((t >> 8) & (t >> 13)));
+      return ((square * arp) & 0xFF);
     }
   }
 ];
