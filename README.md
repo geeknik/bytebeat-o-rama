@@ -10,8 +10,7 @@ A web-based bytebeat music generator that creates algorithmic music through math
 - Play/pause controls with time counter display
 - Responsive design with a modern dark theme
 
-![image](https://github.com/user-attachments/assets/be1f458f-813f-4361-9394-7000f62f197b)
-
+![image](https://github.com/user-attachments/assets/1f16bdea-17ef-4dae-979a-da4fdec8426a)
 
 ## Getting Started
 
