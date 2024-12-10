@@ -21,7 +21,11 @@ export class BytebeatProcessor {
   private sampleRate: number = 8000;
   
   constructor(onVisualize: (data: number) => void) {
+    // Create audio context with suspended state
     this.audioContext = new AudioContext();
+    this.audioContext.suspend();
+    
+    // Create script processor node with appropriate buffer size
     this.scriptNode = this.audioContext.createScriptProcessor(1024, 1, 1);
     
     this.scriptNode.onaudioprocess = (e) => {
@@ -29,23 +33,32 @@ export class BytebeatProcessor {
       
       for (let i = 0; i < output.length; i++) {
         const sample = calculateSample(this.t) / 255;
-        output[i] = sample * 2 - 1;
+        output[i] = sample * 2 - 1; // Convert to range [-1, 1]
         onVisualize(sample);
         this.t++;
       }
     };
   }
 
-  start() {
+  async start() {
     if (!this.isPlaying) {
-      this.scriptNode.connect(this.audioContext.destination);
-      this.isPlaying = true;
+      try {
+        // Resume audio context if it's suspended
+        if (this.audioContext.state === 'suspended') {
+          await this.audioContext.resume();
+        }
+        this.scriptNode.connect(this.audioContext.destination);
+        this.isPlaying = true;
+      } catch (error) {
+        console.error('Error starting audio:', error);
+      }
     }
   }
 
   stop() {
     if (this.isPlaying) {
       this.scriptNode.disconnect();
+      this.audioContext.suspend();
       this.isPlaying = false;
     }
   }
