@@ -89,17 +89,17 @@ export class BytebeatProcessor {
   private lastProcessTime: number = 0;
   private baseRate: number = 8000;
   private currentAlgorithm: string;
-  private bufferSize: number = 1024;
+  private bufferSize: number = 2048; // Increased for better stability
   private gain: GainNode;
+  private visualizationThrottle: number = 0;
   
   constructor(onVisualize: (data: number) => void, initialAlgorithm: string = bytebeatAlgorithms[0].name) {
     this.audioContext = new AudioContext();
     this.audioContext.suspend();
     this.currentAlgorithm = initialAlgorithm;
     
-    // Create gain node for volume control
     this.gain = this.audioContext.createGain();
-    this.gain.gain.value = 0.5; // Set volume to 50%
+    this.gain.gain.value = 0.5;
     this.gain.connect(this.audioContext.destination);
     
     this.scriptNode = this.audioContext.createScriptProcessor(this.bufferSize, 1, 1);
@@ -114,19 +114,20 @@ export class BytebeatProcessor {
         const rateRatio = this.sampleRate / this.baseRate;
         const sample = calculateSample(Math.floor(this.t), this.currentAlgorithm);
         
-        // Ensure proper normalization and prevent clipping
         const normalizedSample = (sample / 128.0) - 1.0;
         output[i] = Math.max(-1.0, Math.min(1.0, normalizedSample));
         
-        if (i % 4 === 0) {
+        // Throttle visualization updates
+        this.visualizationThrottle++;
+        if (this.visualizationThrottle >= 8) { // Only update every 8th sample
           onVisualize(sample / 255);
+          this.visualizationThrottle = 0;
         }
         
         this.t += rateRatio;
       }
     };
 
-    // Connect script node to gain node instead of directly to destination
     this.scriptNode.connect(this.gain);
 
     window.addEventListener('beforeunload', () => {

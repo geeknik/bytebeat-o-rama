@@ -7,7 +7,7 @@ interface WaveformVisualizerProps {
 const WaveformVisualizer: React.FC<WaveformVisualizerProps> = ({ data }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointsRef = useRef<number[]>([]);
-  const maxPointsRef = useRef(800); // Match canvas width
+  const maxPointsRef = useRef(400); // Reduced from 800 for better performance
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -19,9 +19,9 @@ const WaveformVisualizer: React.FC<WaveformVisualizerProps> = ({ data }) => {
     // Normalize data to be between 0 and 1
     const normalizedData = Math.max(0, Math.min(1, data));
 
-    // Add new point
+    // Add new point with buffer management
     pointsRef.current.push(normalizedData);
-    if (pointsRef.current.length > maxPointsRef.current) {
+    while (pointsRef.current.length > maxPointsRef.current) {
       pointsRef.current.shift();
     }
 
@@ -29,12 +29,12 @@ const WaveformVisualizer: React.FC<WaveformVisualizerProps> = ({ data }) => {
     ctx.fillStyle = '#1a1a1a';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw grid
+    // Draw grid (reduced number of lines)
     ctx.strokeStyle = '#333333';
     ctx.lineWidth = 0.5;
 
-    // Vertical grid lines (time divisions)
-    for (let i = 0; i < canvas.width; i += 50) {
+    // Vertical grid lines (time divisions) - reduced frequency
+    for (let i = 0; i < canvas.width; i += 100) {
       ctx.beginPath();
       ctx.moveTo(i, 0);
       ctx.lineTo(i, canvas.height);
@@ -46,8 +46,8 @@ const WaveformVisualizer: React.FC<WaveformVisualizerProps> = ({ data }) => {
       ctx.fillText(`${i}ms`, i, canvas.height - 5);
     }
 
-    // Horizontal grid lines (amplitude divisions)
-    for (let i = 0; i < canvas.height; i += 40) {
+    // Horizontal grid lines (amplitude divisions) - reduced frequency
+    for (let i = 0; i < canvas.height; i += 50) {
       ctx.beginPath();
       ctx.moveTo(0, i);
       ctx.lineTo(canvas.width, i);
@@ -60,7 +60,7 @@ const WaveformVisualizer: React.FC<WaveformVisualizerProps> = ({ data }) => {
       ctx.fillText(`${amplitude}`, 5, i + 10);
     }
 
-    // Draw waveform with gradient
+    // Draw waveform
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
     gradient.addColorStop(0, '#00f3ff');
     gradient.addColorStop(1, '#0066ff');
@@ -69,25 +69,24 @@ const WaveformVisualizer: React.FC<WaveformVisualizerProps> = ({ data }) => {
     ctx.lineWidth = 2;
     ctx.beginPath();
 
-    // Draw points with smoother interpolation
+    // Optimize point drawing
+    const step = Math.max(1, Math.floor(pointsRef.current.length / canvas.width));
     pointsRef.current.forEach((point, index) => {
-      const x = index;
+      if (index % step !== 0) return;
+      
+      const x = (index / step) * (canvas.width / (pointsRef.current.length / step));
       const y = canvas.height - (point * canvas.height);
 
       if (index === 0) {
         ctx.moveTo(x, y);
       } else {
-        // Use quadratic curves for smoother lines
-        const prevX = index - 1;
-        const prevY = canvas.height - (pointsRef.current[index - 1] * canvas.height);
-        const cpX = (x + prevX) / 2;
-        ctx.quadraticCurveTo(cpX, prevY, x, y);
+        ctx.lineTo(x, y);
       }
     });
 
-    // Add glow effect
+    // Simplified glow effect
     ctx.shadowColor = '#00f3ff';
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = 5;
     ctx.stroke();
 
     // Reset shadow for next frame
