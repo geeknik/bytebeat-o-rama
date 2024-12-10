@@ -90,13 +90,18 @@ export class BytebeatProcessor {
   private baseRate: number = 8000;
   private currentAlgorithm: string;
   private bufferSize: number = 1024;
+  private gain: GainNode;
   
   constructor(onVisualize: (data: number) => void, initialAlgorithm: string = bytebeatAlgorithms[0].name) {
     this.audioContext = new AudioContext();
     this.audioContext.suspend();
     this.currentAlgorithm = initialAlgorithm;
     
-    // Use a larger buffer size for more stable audio processing
+    // Create gain node for volume control
+    this.gain = this.audioContext.createGain();
+    this.gain.gain.value = 0.5; // Set volume to 50%
+    this.gain.connect(this.audioContext.destination);
+    
     this.scriptNode = this.audioContext.createScriptProcessor(this.bufferSize, 1, 1);
     
     this.scriptNode.onaudioprocess = (e) => {
@@ -105,15 +110,14 @@ export class BytebeatProcessor {
       const timeDelta = currentTime - this.lastProcessTime;
       this.lastProcessTime = currentTime;
       
-      // Process audio in chunks for better performance
       for (let i = 0; i < output.length; i++) {
         const rateRatio = this.sampleRate / this.baseRate;
         const sample = calculateSample(Math.floor(this.t), this.currentAlgorithm);
         
-        // Normalize sample to [-1, 1] range for audio output
-        output[i] = (sample / 255) * 2 - 1;
+        // Ensure proper normalization and prevent clipping
+        const normalizedSample = (sample / 128.0) - 1.0;
+        output[i] = Math.max(-1.0, Math.min(1.0, normalizedSample));
         
-        // Send every nth sample to visualizer to prevent overwhelming it
         if (i % 4 === 0) {
           onVisualize(sample / 255);
         }
@@ -122,7 +126,9 @@ export class BytebeatProcessor {
       }
     };
 
-    // Prevent audio context memory leaks
+    // Connect script node to gain node instead of directly to destination
+    this.scriptNode.connect(this.gain);
+
     window.addEventListener('beforeunload', () => {
       this.stop();
       this.audioContext.close();
@@ -132,11 +138,8 @@ export class BytebeatProcessor {
   async start() {
     if (!this.isPlaying) {
       try {
-        if (this.audioContext.state === 'suspended') {
-          await this.audioContext.resume();
-        }
+        await this.audioContext.resume();
         this.lastProcessTime = performance.now();
-        this.scriptNode.connect(this.audioContext.destination);
         this.isPlaying = true;
         console.log('BytebeatProcessor started successfully');
       } catch (error) {
