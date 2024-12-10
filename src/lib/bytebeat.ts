@@ -42,7 +42,9 @@ export const bytebeatAlgorithms: BytebeatAlgorithm[] = [
     name: "Digital Rain",
     description: "Cascading digital tones",
     formula: (t: number): number => {
-      return ((t >> 6) ^ (t & 0x25)) * (((t >> 11) ^ (t & 0x25)));
+      // Normalize the output to stay within 0-255 range
+      const raw = ((t >> 6) ^ (t & 0x25)) * (((t >> 11) ^ (t & 0x25)));
+      return raw & 0xFF;
     }
   }
 ];
