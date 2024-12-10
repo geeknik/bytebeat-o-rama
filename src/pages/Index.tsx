@@ -86,8 +86,8 @@ const Index = () => {
             <div className="space-y-2">
               <label className="text-sm font-mono">Algorithm</label>
               <Select value={selectedAlgorithm} onValueChange={handleAlgorithmChange}>
-                <SelectTrigger>
-                  <SelectValue defaultValue={selectedAlgorithm} />
+                <SelectTrigger className="w-full">
+                  <SelectValue>{selectedAlgorithm}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {bytebeatAlgorithms.map((algo) => (
