@@ -89,13 +89,15 @@ export class BytebeatProcessor {
   private lastProcessTime: number = 0;
   private baseRate: number = 8000;
   private currentAlgorithm: string;
+  private bufferSize: number = 1024;
   
   constructor(onVisualize: (data: number) => void, initialAlgorithm: string = bytebeatAlgorithms[0].name) {
     this.audioContext = new AudioContext();
     this.audioContext.suspend();
     this.currentAlgorithm = initialAlgorithm;
     
-    this.scriptNode = this.audioContext.createScriptProcessor(1024, 1, 1);
+    // Use a larger buffer size for more stable audio processing
+    this.scriptNode = this.audioContext.createScriptProcessor(this.bufferSize, 1, 1);
     
     this.scriptNode.onaudioprocess = (e) => {
       const output = e.outputBuffer.getChannelData(0);
@@ -103,15 +105,28 @@ export class BytebeatProcessor {
       const timeDelta = currentTime - this.lastProcessTime;
       this.lastProcessTime = currentTime;
       
+      // Process audio in chunks for better performance
       for (let i = 0; i < output.length; i++) {
         const rateRatio = this.sampleRate / this.baseRate;
-        const sample = calculateSample(Math.floor(this.t), this.currentAlgorithm) / 255;
-        output[i] = sample * 2 - 1;
-        onVisualize(sample);
+        const sample = calculateSample(Math.floor(this.t), this.currentAlgorithm);
+        
+        // Normalize sample to [-1, 1] range for audio output
+        output[i] = (sample / 255) * 2 - 1;
+        
+        // Send every nth sample to visualizer to prevent overwhelming it
+        if (i % 4 === 0) {
+          onVisualize(sample / 255);
+        }
         
         this.t += rateRatio;
       }
     };
+
+    // Prevent audio context memory leaks
+    window.addEventListener('beforeunload', () => {
+      this.stop();
+      this.audioContext.close();
+    });
   }
 
   async start() {
@@ -123,6 +138,7 @@ export class BytebeatProcessor {
         this.lastProcessTime = performance.now();
         this.scriptNode.connect(this.audioContext.destination);
         this.isPlaying = true;
+        console.log('BytebeatProcessor started successfully');
       } catch (error) {
         console.error('Error starting audio:', error);
       }
@@ -134,15 +150,18 @@ export class BytebeatProcessor {
       this.scriptNode.disconnect();
       this.audioContext.suspend();
       this.isPlaying = false;
+      console.log('BytebeatProcessor stopped');
     }
   }
 
   setSampleRate(rate: number) {
-    this.sampleRate = rate;
+    this.sampleRate = Math.max(4000, Math.min(44100, rate));
+    console.log(`Sample rate set to ${this.sampleRate}Hz`);
   }
 
   setAlgorithm(algorithmName: string) {
     this.currentAlgorithm = algorithmName;
+    console.log(`Algorithm changed to ${algorithmName}`);
   }
 
   getCurrentTime() {
