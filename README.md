@@ -1,69 +1,62 @@
-# Welcome to your Lovable project
+# Bytebeat-o-rama
 
-## Project info
+A web-based bytebeat music generator that creates algorithmic music through mathematical expressions and bitwise operations. Built with React, TypeScript, and Web Audio API.
 
-**URL**: https://lovable.dev/projects/b8f7b6fa-a48d-4a0d-a969-ea3654913444
+## Features
 
-## How can I edit this code?
+- Real-time audio synthesis using bytebeat algorithms
+- Interactive waveform visualization
+- Adjustable sample rate (4000Hz - 44100Hz)
+- Play/pause controls with time counter display
+- Responsive design with a modern dark theme
 
-There are several ways of editing your application.
+## Getting Started
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b8f7b6fa-a48d-4a0d-a969-ea3654913444) and start prompting.
+- Node.js (v14 or higher)
+- npm or yarn package manager
 
-Changes made via Lovable will be committed automatically to this repo.
+### Installation
 
-**Use your preferred IDE**
+1. Clone the repository:
+```bash
+git clone [your-repo-url]
+cd bytebeat-o-rama
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. Install dependencies:
+```bash
+npm install
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Open your browser and navigate to `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## How It Works
 
-**Use GitHub Codespaces**
+Bytebeat music is generated through mathematical expressions that produce audio samples based on a time variable `t`. Each sample is calculated using bitwise operations and mathematical functions, creating unique patterns that result in musical sounds.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+The sample rate can be adjusted to modify the playback speed and pitch of the generated audio.
 
-## What technologies are used for this project?
+## Built With
 
-This project is built with .
-
-- Vite
-- TypeScript
 - React
-- shadcn-ui
+- TypeScript
+- Vite
+- Web Audio API
+- shadcn/ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## License
 
-Simply open [Lovable](https://lovable.dev/projects/b8f7b6fa-a48d-4a0d-a969-ea3654913444) and click on Share -> Publish.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## I want to use a custom domain - is that possible?
+## Acknowledgments
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+- Inspired by the bytebeat music movement and the work of viznut
+- Built using modern web technologies and real-time audio processing
