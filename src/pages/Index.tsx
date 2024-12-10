@@ -85,10 +85,22 @@ const Index = () => {
                 className="grid gap-4"
               >
                 {bytebeatAlgorithms.map((algo) => (
-                  <div key={algo.name} className="flex items-center space-x-3 rounded-lg border p-4">
-                    <RadioGroupItem value={algo.name} id={algo.name} />
+                  <div 
+                    key={algo.name} 
+                    className={`flex items-center space-x-3 rounded-lg border p-4 transition-colors ${
+                      selectedAlgorithm === algo.name 
+                        ? 'bg-cyan-500/20 border-cyan-500' 
+                        : 'border-gray-700 hover:border-gray-600'
+                    }`}
+                  >
+                    <RadioGroupItem value={algo.name} id={algo.name} className="text-cyan-500" />
                     <div className="space-y-1">
-                      <label htmlFor={algo.name} className="font-medium leading-none cursor-pointer">
+                      <label 
+                        htmlFor={algo.name} 
+                        className={`font-medium leading-none cursor-pointer ${
+                          selectedAlgorithm === algo.name ? 'text-cyan-500' : ''
+                        }`}
+                      >
                         {algo.name}
                       </label>
                       <p className="text-sm text-gray-400">
