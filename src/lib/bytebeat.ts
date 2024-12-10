@@ -1,16 +1,20 @@
 export const calculateSample = (t: number): number => {
-  // More musical patterns with harmonics and rhythmic elements
-  const bass = Number(t & (t >> 4)) | (t >> 3);
-  const melody = ((t % (1 << 14)) < (1 << 13) ? t ^ (t >> 8) : t >> 4);
-  const rhythm = t <= 0 ? 1 : 1 + (t % 64);
-  const harmony = Number((t >> 12) & (t >> 8)) * ((t >> 14) & 3);
+  // Create multiple layers of sound
+  const bass = ((t >> 4) | (t >> 8)) * (((t >> 12) & 63) + 1);
+  const melody = ((t * 5 & t >> 7) | (t * 3 & t >> 10));
+  const harmony = (t * (t >> 5 | t >> 8) >> (t >> 16));
+  const rhythm = t * ((t >> 9 | t >> 13) & 15);
   
-  return (
-    0xff &
-    ((((bass & melody) / rhythm ^ (t % 42)) | harmony) +
-      ((t * (t >> 16)) & 0xc0) |
-      ((t >> 3) & (t >> 10) & (t >> 12) & 0x8f))
-  );
+  // Combine layers with different weights
+  const combined = (
+    (bass & 0xFF) * 0.3 +
+    (melody & 0xFF) * 0.4 +
+    (harmony & 0xFF) * 0.2 +
+    (rhythm & 0xFF) * 0.1
+  ) / 1.5;
+  
+  // Normalize to 0-255 range and apply subtle wave shaping
+  return Math.min(255, Math.max(0, combined)) & 0xFF;
 };
 
 export class BytebeatProcessor {
