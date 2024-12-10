@@ -1,15 +1,15 @@
 export const calculateSample = (t: number): number => {
-  // Convert bitwise operations to numbers to ensure type safety
-  const part1 = Number(t & (t >> 6));
-  const part2 = ((t % (1 << 14)) < (1 << 13) ? t ^ (t >> 8) : t >> 8);
-  const part3 = t <= 0 ? 1 : 1 + (t % 32);
-  const part4 = Number((t >> 18) && t <= (1 << 18) + (1 << 17)) * t << 1;
+  // More musical patterns with harmonics and rhythmic elements
+  const bass = Number(t & (t >> 4)) | (t >> 3);
+  const melody = ((t % (1 << 14)) < (1 << 13) ? t ^ (t >> 8) : t >> 4);
+  const rhythm = t <= 0 ? 1 : 1 + (t % 64);
+  const harmony = Number((t >> 12) & (t >> 8)) * ((t >> 14) & 3);
   
   return (
-    0xfa &
-    ((((part1 & part2) / part3 ^ (t % 30)) | part4) +
-      ((t * (t >> 18)) & 0xe0) |
-      ((t / 10) & (t >> 14) & (t >> 15) & 0xaa))
+    0xff &
+    ((((bass & melody) / rhythm ^ (t % 42)) | harmony) +
+      ((t * (t >> 16)) & 0xc0) |
+      ((t >> 3) & (t >> 10) & (t >> 12) & 0x8f))
   );
 };
 
