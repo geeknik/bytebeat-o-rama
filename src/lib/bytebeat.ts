@@ -1,20 +1,55 @@
-export const calculateSample = (t: number): number => {
-  // Create multiple layers of sound
-  const bass = ((t >> 4) | (t >> 8)) * (((t >> 12) & 63) + 1);
-  const melody = ((t * 5 & t >> 7) | (t * 3 & t >> 10));
-  const harmony = (t * (t >> 5 | t >> 8) >> (t >> 16));
-  const rhythm = t * ((t >> 9 | t >> 13) & 15);
-  
-  // Combine layers with different weights
-  const combined = (
-    (bass & 0xFF) * 0.3 +
-    (melody & 0xFF) * 0.4 +
-    (harmony & 0xFF) * 0.2 +
-    (rhythm & 0xFF) * 0.1
-  ) / 1.5;
-  
-  // Normalize to 0-255 range and apply subtle wave shaping
-  return Math.min(255, Math.max(0, combined)) & 0xFF;
+type BytebeatAlgorithm = {
+  name: string;
+  description: string;
+  formula: (t: number) => number;
+};
+
+export const bytebeatAlgorithms: BytebeatAlgorithm[] = [
+  {
+    name: "Classic Mix",
+    description: "A balanced mix of bass, melody, harmony and rhythm",
+    formula: (t: number): number => {
+      const bass = ((t >> 4) | (t >> 8)) * (((t >> 12) & 63) + 1);
+      const melody = ((t * 5 & t >> 7) | (t * 3 & t >> 10));
+      const harmony = (t * (t >> 5 | t >> 8) >> (t >> 16));
+      const rhythm = t * ((t >> 9 | t >> 13) & 15);
+      
+      const combined = (
+        (bass & 0xFF) * 0.3 +
+        (melody & 0xFF) * 0.4 +
+        (harmony & 0xFF) * 0.2 +
+        (rhythm & 0xFF) * 0.1
+      ) / 1.5;
+      
+      return Math.min(255, Math.max(0, combined)) & 0xFF;
+    }
+  },
+  {
+    name: "Viznut Original",
+    description: "The original bytebeat formula by Viznut",
+    formula: (t: number): number => {
+      return ((t * 5) & (t >> 7)) | (t * 3 & t >> 10);
+    }
+  },
+  {
+    name: "Glitch Bass",
+    description: "Heavy bass with glitch effects",
+    formula: (t: number): number => {
+      return (t * (t >> 5 | t >> 8) >> (t >> 16)) & 0xFF;
+    }
+  },
+  {
+    name: "Digital Rain",
+    description: "Cascading digital tones",
+    formula: (t: number): number => {
+      return ((t >> 6) ^ (t & 0x25)) * (((t >> 11) ^ (t & 0x25)));
+    }
+  }
+];
+
+export const calculateSample = (t: number, selectedAlgorithm: string): number => {
+  const algorithm = bytebeatAlgorithms.find(a => a.name === selectedAlgorithm) || bytebeatAlgorithms[0];
+  return algorithm.formula(t);
 };
 
 export class BytebeatProcessor {
@@ -24,11 +59,13 @@ export class BytebeatProcessor {
   private isPlaying: boolean = false;
   private sampleRate: number = 8000;
   private lastProcessTime: number = 0;
-  private baseRate: number = 8000; // Reference rate for timing calculations
+  private baseRate: number = 8000;
+  private currentAlgorithm: string;
   
-  constructor(onVisualize: (data: number) => void) {
+  constructor(onVisualize: (data: number) => void, initialAlgorithm: string = bytebeatAlgorithms[0].name) {
     this.audioContext = new AudioContext();
     this.audioContext.suspend();
+    this.currentAlgorithm = initialAlgorithm;
     
     this.scriptNode = this.audioContext.createScriptProcessor(1024, 1, 1);
     
@@ -39,13 +76,11 @@ export class BytebeatProcessor {
       this.lastProcessTime = currentTime;
       
       for (let i = 0; i < output.length; i++) {
-        // Adjust timing based on sample rate ratio
         const rateRatio = this.sampleRate / this.baseRate;
-        const sample = calculateSample(Math.floor(this.t)) / 255;
-        output[i] = sample * 2 - 1; // Convert to range [-1, 1]
+        const sample = calculateSample(Math.floor(this.t), this.currentAlgorithm) / 255;
+        output[i] = sample * 2 - 1;
         onVisualize(sample);
         
-        // Increment t based on the sample rate ratio
         this.t += rateRatio;
       }
     };
@@ -76,6 +111,10 @@ export class BytebeatProcessor {
 
   setSampleRate(rate: number) {
     this.sampleRate = rate;
+  }
+
+  setAlgorithm(algorithmName: string) {
+    this.currentAlgorithm = algorithmName;
   }
 
   getCurrentTime() {
