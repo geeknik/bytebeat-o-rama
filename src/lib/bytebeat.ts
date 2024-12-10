@@ -23,23 +23,30 @@ export class BytebeatProcessor {
   private t: number = 1;
   private isPlaying: boolean = false;
   private sampleRate: number = 8000;
+  private lastProcessTime: number = 0;
+  private baseRate: number = 8000; // Reference rate for timing calculations
   
   constructor(onVisualize: (data: number) => void) {
-    // Create audio context with suspended state
     this.audioContext = new AudioContext();
     this.audioContext.suspend();
     
-    // Create script processor node with appropriate buffer size
     this.scriptNode = this.audioContext.createScriptProcessor(1024, 1, 1);
     
     this.scriptNode.onaudioprocess = (e) => {
       const output = e.outputBuffer.getChannelData(0);
+      const currentTime = performance.now();
+      const timeDelta = currentTime - this.lastProcessTime;
+      this.lastProcessTime = currentTime;
       
       for (let i = 0; i < output.length; i++) {
-        const sample = calculateSample(this.t) / 255;
+        // Adjust timing based on sample rate ratio
+        const rateRatio = this.sampleRate / this.baseRate;
+        const sample = calculateSample(Math.floor(this.t)) / 255;
         output[i] = sample * 2 - 1; // Convert to range [-1, 1]
         onVisualize(sample);
-        this.t++;
+        
+        // Increment t based on the sample rate ratio
+        this.t += rateRatio;
       }
     };
   }
@@ -47,10 +54,10 @@ export class BytebeatProcessor {
   async start() {
     if (!this.isPlaying) {
       try {
-        // Resume audio context if it's suspended
         if (this.audioContext.state === 'suspended') {
           await this.audioContext.resume();
         }
+        this.lastProcessTime = performance.now();
         this.scriptNode.connect(this.audioContext.destination);
         this.isPlaying = true;
       } catch (error) {
@@ -72,6 +79,6 @@ export class BytebeatProcessor {
   }
 
   getCurrentTime() {
-    return this.t;
+    return Math.floor(this.t);
   }
 }
