@@ -10,6 +10,9 @@ A web-based bytebeat music generator that creates algorithmic music through math
 - Play/pause controls with time counter display
 - Responsive design with a modern dark theme
 
+![image](https://github.com/user-attachments/assets/be1f458f-813f-4361-9394-7000f62f197b)
+
+
 ## Getting Started
 
 ### Prerequisites
@@ -21,7 +24,7 @@ A web-based bytebeat music generator that creates algorithmic music through math
 
 1. Clone the repository:
 ```bash
-git clone [your-repo-url]
+git clone https://github.com/geeknik/bytebeat-o-rama
 cd bytebeat-o-rama
 ```
 
