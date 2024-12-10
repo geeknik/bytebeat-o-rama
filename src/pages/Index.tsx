@@ -1,13 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import WaveformVisualizer from '@/components/WaveformVisualizer';
 import { BytebeatProcessor, bytebeatAlgorithms } from '@/lib/bytebeat';
 import { Play, Pause } from 'lucide-react';
@@ -85,21 +79,25 @@ const Index = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-mono">Algorithm</label>
-              <Select value={selectedAlgorithm} onValueChange={handleAlgorithmChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue>{selectedAlgorithm}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {bytebeatAlgorithms.map((algo) => (
-                    <SelectItem key={algo.name} value={algo.name}>
-                      <div className="space-y-1">
-                        <div>{algo.name}</div>
-                        <div className="text-xs text-gray-400">{algo.description}</div>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <RadioGroup
+                value={selectedAlgorithm}
+                onValueChange={handleAlgorithmChange}
+                className="grid gap-4"
+              >
+                {bytebeatAlgorithms.map((algo) => (
+                  <div key={algo.name} className="flex items-center space-x-3 rounded-lg border p-4">
+                    <RadioGroupItem value={algo.name} id={algo.name} />
+                    <div className="space-y-1">
+                      <label htmlFor={algo.name} className="font-medium leading-none cursor-pointer">
+                        {algo.name}
+                      </label>
+                      <p className="text-sm text-gray-400">
+                        {algo.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </RadioGroup>
             </div>
 
             <div className="space-y-2">
