@@ -2,6 +2,8 @@
 
 A web-based bytebeat music generator that creates algorithmic music through mathematical expressions and bitwise operations. Built with React, TypeScript, and Web Audio API.
 
+[Temporary Demo](https://preview--bytebeat-o-rama.lovable.app)
+
 ## Features
 
 - Real-time audio synthesis using bytebeat algorithms
