@@ -70,20 +70,15 @@ export const bytebeatAlgorithms: BytebeatAlgorithm[] = [
     name: "DX7 Style",
     description: "Inspired by FM synthesis sounds of the Yamaha DX7",
     formula: (t: number): number => {
-      // Create a slower fundamental frequency
-      const fundamental = t * 0.0002;
+      // Create a complex FM-style sound using bitwise operations
+      const carrier = (t * 3) & (t >> 5);
+      const modulator = (t >> 3) ^ (t >> 7);
+      const envelope = ((t >> 8) & 127);
       
-      // Modulator with controlled frequency ratio
-      const modulator = Math.sin(fundamental * 2) * 20;
+      // Combine signals with FM-style modulation
+      const output = ((carrier * modulator) & envelope) & 0xFF;
       
-      // Carrier frequency modulated by the modulator
-      const carrier = Math.sin(fundamental + modulator) * 127;
-      
-      // Envelope to shape the sound over time
-      const env = Math.max(0, Math.min(1, (((t >> 12) & 127) / 127)));
-      
-      // Combine and normalize to 8-bit range (0-255)
-      return Math.floor(((carrier * env) + 127)) & 0xFF;
+      return output;
     }
   }
 ];
