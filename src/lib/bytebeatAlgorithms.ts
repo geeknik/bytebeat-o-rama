@@ -65,21 +65,5 @@ export const bytebeatAlgorithms: BytebeatAlgorithm[] = [
       const arp = t * ((t >> 9) | ((t >> 8) & (t >> 13)));
       return ((square * arp) & 0xFF);
     }
-  },
-  {
-    name: "DX7 Style",
-    description: "Inspired by FM synthesis sounds of the Yamaha DX7",
-    formula: (t: number): number => {
-      // Create a complex modulation chain using bitwise operations
-      const carrier = ((t << 3) & (t >> 5)) + ((t << 2) & (t >> 7));
-      const modulator = (t >> 4) ^ (t >> 8) ^ (t * 3);
-      const feedback = ((t >> 3) & (t >> 7)) * ((t >> 2) | (t >> 9));
-      
-      // Create a more complex envelope using bit shifting
-      const envelope = ((t >> 10) & 63) ^ ((t >> 12) & 31);
-      
-      // Combine all elements with non-linear interactions
-      return ((carrier * modulator + feedback) & envelope) & 0xFF;
-    }
   }
 ];
