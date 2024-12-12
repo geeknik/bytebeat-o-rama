@@ -2,6 +2,7 @@ type BytebeatAlgorithm = {
   name: string;
   description: string;
   formula: (t: number) => number;
+  experimental?: boolean;
 };
 
 export const bytebeatAlgorithms: BytebeatAlgorithm[] = [
@@ -136,5 +137,58 @@ export const bytebeatAlgorithms: BytebeatAlgorithm[] = [
       const mobius = (a * t + b) / ((t >> 8) + 1);
       return (mobius & (t >> 4)) & 0xFF;
     }
+  },
+  {
+    name: "Quantum Superposition",
+    description: "Explores quantum uncertainty through wave function collapse simulation",
+    formula: (t: number): number => {
+      const psi = Math.sin(t * 0.0001) * ((t >> 7) | (t >> 9));
+      const collapse = (t * psi) & ((t >> 5) ^ (t << 3));
+      return (collapse & ((t >> 4) | (t << 6))) & 0xFF;
+    },
+    experimental: true
+  },
+  {
+    name: "Hyperdimensional Pulse",
+    description: "Attempts to sonify theoretical higher spatial dimensions",
+    formula: (t: number): number => {
+      const dimensions = [t >> 3, t >> 5, t >> 7, t >> 9];
+      const hyperspace = dimensions.reduce((acc, dim) => (acc ^ dim) & (t >> 2));
+      return (hyperspace * ((t >> 6) | (t << 4))) & 0xFF;
+    },
+    experimental: true
+  },
+  {
+    name: "Consciousness Wave",
+    description: "Based on theoretical models of quantum consciousness and neural oscillations",
+    formula: (t: number): number => {
+      const phi = 1.618033988749895; // Golden ratio
+      const consciousness = (t * phi) & ((t >> 8) * Math.E);
+      const brainwave = consciousness ^ (t >> ((t >> 14) & 7));
+      return (brainwave & ((t >> 3) | (t << 5))) & 0xFF;
+    },
+    experimental: true
+  },
+  {
+    name: "Time Dilation",
+    description: "Inspired by relativistic time dilation near event horizons",
+    formula: (t: number): number => {
+      const c = 299792458; // Speed of light
+      const gravitationalTime = t + Math.sin(t * 0.0001) * (t >> 7);
+      const spacetime = (gravitationalTime * (t >> 5)) & (t >> ((t >> 16) & 3));
+      return (spacetime ^ ((t >> 4) | (t << 3))) & 0xFF;
+    },
+    experimental: true
+  },
+  {
+    name: "Interdimensional Portal",
+    description: "Theoretical sound pattern that might resonate with parallel universes",
+    formula: (t: number): number => {
+      const portalFreq = ((t << 2) ^ (t >> 5)) * Math.PI;
+      const vortex = (portalFreq & (t >> 7)) ^ ((t << 3) & (t >> 4));
+      const resonance = vortex * ((t >> 3) | (t << 5));
+      return (resonance & ((t >> 6) ^ (t << 2))) & 0xFF;
+    },
+    experimental: true
   }
 ];
