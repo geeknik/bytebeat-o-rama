@@ -190,5 +190,29 @@ export const bytebeatAlgorithms: BytebeatAlgorithm[] = [
       return (resonance & ((t >> 6) ^ (t << 2))) & 0xFF;
     },
     experimental: true
+  },
+  {
+    name: "Spirit Box Transmission",
+    description: "Experimental algorithm that attempts to create speech-like patterns through rapid frequency scanning and modulation, inspired by paranormal research equipment.",
+    formula: (t: number): number => {
+      // Rapid frequency scanning (similar to spirit box frequency hopping)
+      const scanRate = Math.sin(t * 0.0001) * 10;
+      
+      // Create voice-like formants through frequency bands
+      const formant1 = ((t << 3) & (t >> 5)) * (Math.sin(t * 0.001) + 1);
+      const formant2 = ((t << 2) & (t >> 7)) * (Math.cos(t * 0.002) + 1);
+      
+      // Add white noise component
+      const noise = (Math.sin(t * 0.1) * 127) & (t >> 4);
+      
+      // Amplitude modulation to create word-like segments
+      const envelope = Math.sin(t * 0.0002) * Math.sin(t * 0.00004);
+      
+      // Combine all components
+      const signal = ((formant1 + formant2) * envelope + noise * scanRate);
+      
+      return (signal & 0xFF);
+    },
+    experimental: true
   }
 ];
