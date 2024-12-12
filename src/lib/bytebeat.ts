@@ -109,9 +109,10 @@ export class BytebeatProcessor {
   private lastProcessTime: number = 0;
   private baseRate: number = 8000;
   private currentAlgorithm: string;
-  private bufferSize: number = 2048; // Increased for better stability
+  private bufferSize: number = 4096; // Increased buffer size for smoother playback
   private gain: GainNode;
   private visualizationThrottle: number = 0;
+  private lastVisualizationTime: number = 0;
   
   constructor(onVisualize: (data: number) => void, initialAlgorithm: string = bytebeatAlgorithms[0].name) {
     this.audioContext = new AudioContext();
@@ -130,21 +131,29 @@ export class BytebeatProcessor {
       const timeDelta = currentTime - this.lastProcessTime;
       this.lastProcessTime = currentTime;
       
+      // Calculate samples for this buffer
       for (let i = 0; i < output.length; i++) {
         const rateRatio = this.sampleRate / this.baseRate;
         const sample = calculateSample(Math.floor(this.t), this.currentAlgorithm);
         
+        // Normalize to [-1.0, 1.0] range for audio output
         const normalizedSample = (sample / 128.0) - 1.0;
         output[i] = Math.max(-1.0, Math.min(1.0, normalizedSample));
         
-        // Throttle visualization updates
-        this.visualizationThrottle++;
-        if (this.visualizationThrottle >= 8) { // Only update every 8th sample
+        // Update visualization less frequently to prevent visual stuttering
+        const now = performance.now();
+        if (now - this.lastVisualizationTime >= 16) { // ~60fps
           onVisualize(sample / 255);
-          this.visualizationThrottle = 0;
+          this.lastVisualizationTime = now;
         }
         
+        // Increment time counter continuously
         this.t += rateRatio;
+        
+        // Prevent potential overflow while maintaining continuity
+        if (this.t >= Number.MAX_SAFE_INTEGER - 1000000) {
+          this.t = 1000000; // Reset to a reasonable non-zero value
+        }
       }
     };
 
