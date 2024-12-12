@@ -18,10 +18,11 @@ export class BytebeatProcessor {
   private baseRate: number = 8000;
   private currentAlgorithm: string;
   private bufferSize: number = 4096;
+  private lastVisualizationValue: number = 0;
   
   constructor(onVisualize: (data: number) => void, initialAlgorithm: string = bytebeatAlgorithms[0].name) {
     this.audioProcessor = new AudioProcessor();
-    this.timeManager = new TimeManager();
+    this.timeManager = new TimeManager(60); // Set to 60fps
     this.currentAlgorithm = initialAlgorithm;
     
     this.scriptNode = this.audioProcessor.createScriptProcessor(this.bufferSize);
@@ -38,9 +39,13 @@ export class BytebeatProcessor {
         const normalizedSample = (sample / 128.0) - 1.0;
         output[i] = Math.max(-1.0, Math.min(1.0, normalizedSample));
         
-        if (this.timeManager.shouldUpdateVisualization()) {
-          onVisualize(sample / 255);
-        }
+        // Store the last sample for visualization
+        this.lastVisualizationValue = sample / 255;
+      }
+
+      // Check if we should update the visualization
+      if (this.timeManager.shouldUpdateVisualization()) {
+        onVisualize(this.lastVisualizationValue);
       }
     };
 
