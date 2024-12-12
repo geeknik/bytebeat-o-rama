@@ -65,5 +65,30 @@ export const bytebeatAlgorithms: BytebeatAlgorithm[] = [
       const arp = t * ((t >> 9) | ((t >> 8) & (t >> 13)));
       return ((square * arp) & 0xFF);
     }
+  },
+  {
+    name: "Quantum Ripple",
+    description: "Complex interference patterns creating evolving soundscapes",
+    formula: (t: number): number => {
+      const wave1 = (t >> 3) ^ (t * 7 & t >> 4);
+      const wave2 = (t >> 5) & (t * 3 | t >> 7);
+      return ((wave1 * wave2) & 0xFF);
+    }
+  },
+  {
+    name: "Binary Storm",
+    description: "Chaotic storm of binary arithmetic operations",
+    formula: (t: number): number => {
+      const storm = ((t >> 4) ^ (t >> 3)) * ((t >> 2) | (t << 3));
+      return (storm + (t >> 6 & t << 4)) & 0xFF;
+    }
+  },
+  {
+    name: "Fractal Pulse",
+    description: "Self-similar patterns creating rhythmic structures",
+    formula: (t: number): number => {
+      const pulse = t * ((t >> 12 | t >> 8) & (63 & t >> 4));
+      return (pulse & 0xFF);
+    }
   }
 ];
