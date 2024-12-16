@@ -28,6 +28,8 @@ export class BytebeatProcessor {
     this.scriptNode = this.audioProcessor.createScriptProcessor(this.bufferSize);
     
     this.scriptNode.onaudioprocess = (e) => {
+      if (!this.isPlaying) return; // Don't process audio if not playing
+      
       const output = e.outputBuffer.getChannelData(0);
       
       for (let i = 0; i < output.length; i++) {
@@ -49,17 +51,14 @@ export class BytebeatProcessor {
       }
     };
 
-    this.scriptNode.connect(this.audioProcessor.getGainNode());
-
-    window.addEventListener('beforeunload', () => {
-      this.stop();
-      this.audioProcessor.close();
-    });
+    // Don't connect the script node until play is pressed
   }
 
   async start() {
     if (!this.isPlaying) {
       try {
+        // Connect the script node only when starting playback
+        this.scriptNode.connect(this.audioProcessor.getGainNode());
         await this.audioProcessor.start();
         this.isPlaying = true;
         console.log('BytebeatProcessor started successfully');
