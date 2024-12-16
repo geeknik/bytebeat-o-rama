@@ -60,7 +60,7 @@ const Index = () => {
     <div className="min-h-screen bg-[#1a1a1a] text-white p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <h1 className="text-4xl font-bold text-center mb-8 font-mono">
-          Bytebeat Generator
+          Bytebeats Generator
         </h1>
 
         <div className="space-y-6">
