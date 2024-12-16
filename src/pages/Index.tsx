@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import WaveformVisualizer from '@/components/WaveformVisualizer';
+import BytebeatFAQ from '@/components/BytebeatFAQ';
 import { BytebeatProcessor, bytebeatAlgorithms } from '@/lib/bytebeat';
 import { Play, Pause, Sparkles } from 'lucide-react';
 
@@ -59,9 +60,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#1a1a1a] text-white p-8 flex flex-col">
       <div className="max-w-4xl mx-auto space-y-8 flex-grow">
-        <h1 className="text-4xl font-bold text-center mb-8 font-mono">
-          Bytebeats Generator
-        </h1>
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold font-mono">
+            Bytebeats Generator
+          </h1>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Create music through pure mathematics! Bytebeats are algorithmic compositions that generate audio using simple mathematical formulas. Choose an algorithm, adjust the sample rate, and explore the fascinating world of mathematical music.
+          </p>
+        </div>
 
         <div className="space-y-6">
           <WaveformVisualizer data={visualData} />
@@ -175,6 +181,11 @@ const Index = () => {
                 )}
               </RadioGroup>
             </div>
+          </div>
+
+          <div className="mt-12 bg-gray-900/30 p-6 rounded-lg border border-gray-800">
+            <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
+            <BytebeatFAQ />
           </div>
         </div>
       </div>
