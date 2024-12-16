@@ -57,8 +57,8 @@ const Index = () => {
   const experimentalAlgorithms = bytebeatAlgorithms.filter(algo => algo.experimental);
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] text-white p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#1a1a1a] text-white p-8 flex flex-col">
+      <div className="max-w-4xl mx-auto space-y-8 flex-grow">
         <h1 className="text-4xl font-bold text-center mb-8 font-mono">
           Bytebeats Generator
         </h1>
@@ -178,6 +178,33 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      <footer className="mt-16 border-t border-gray-800 pt-6 pb-4">
+        <div className="max-w-4xl mx-auto text-center space-y-2">
+          <div className="flex justify-center space-x-4 text-sm text-gray-400">
+            <a 
+              href="https://github.com/geeknik/bytebeat-o-rama" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-cyan-400 transition-colors"
+            >
+              Source Code
+            </a>
+            <span>•</span>
+            <a 
+              href="https://github.com/geeknik/geeknik/blob/main/PRIVACY.md" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-cyan-400 transition-colors"
+            >
+              Privacy Policy
+            </a>
+          </div>
+          <p className="text-sm text-gray-500">
+            © 2025 Total Nerdity
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
