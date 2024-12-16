@@ -80,6 +80,18 @@ const Index = () => {
             </div>
           </div>
 
+          <div className="space-y-2 bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+            <label className="text-sm font-mono">Sample Rate: {sampleRate} Hz</label>
+            <Slider
+              value={[sampleRate]}
+              onValueChange={handleSampleRateChange}
+              min={4000}
+              max={44100}
+              step={100}
+              className="w-full"
+            />
+          </div>
+
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="flex justify-between items-center">
@@ -162,18 +174,6 @@ const Index = () => {
                   </div>
                 )}
               </RadioGroup>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-mono">Sample Rate: {sampleRate} Hz</label>
-              <Slider
-                value={[sampleRate]}
-                onValueChange={handleSampleRateChange}
-                min={4000}
-                max={44100}
-                step={100}
-                className="w-full"
-              />
             </div>
           </div>
         </div>
