@@ -191,7 +191,19 @@ const Index = () => {
       </div>
 
       <footer className="mt-16 border-t border-gray-800 pt-6 pb-4">
-        <div className="max-w-4xl mx-auto text-center space-y-2">
+        <div className="max-w-4xl mx-auto text-center space-y-4">
+          <a 
+            href="https://www.buymeacoffee.com/geeknik" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block hover:opacity-90 transition-opacity mb-4"
+          >
+            <img 
+              src="https://img.buymeacoffee.com/button-api/?text=Buy me a zero-day&emoji=👾&slug=geeknik&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" 
+              alt="Buy me a zero-day"
+              className="mx-auto"
+            />
+          </a>
           <div className="flex justify-center space-x-4 text-sm text-gray-400">
             <a 
               href="https://github.com/geeknik/bytebeat-o-rama" 
